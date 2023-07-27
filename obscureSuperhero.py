@@ -19,13 +19,13 @@ connections = lines.withColumn("id",sqlFunc.split(sqlFunc.col("value")," ")[0])\
 
 connections.createOrReplaceTempView("connections")
 
-popularHero = spark.sql("SELECT ID,SUM(CONNECTIONS) AS CNCTNS FROM CONNECTIONS GROUP BY ID  HAVING SUM(CONNECTIONS) < 2 ORDER BY CNCTNS ASC")
+popularHero = spark.sql("SELECT ID,SUM(CONNECTIONS) AS CNT FROM CONNECTIONS GROUP BY ID  HAVING SUM(CONNECTIONS) < 2 ORDER BY CNT ASC")
 
-heroWithName = popularHero.join(names,"id")
-heroWithName.show()
+heroWithName = popularHero.join(names,"id").select("name","CNT")
 results = heroWithName.collect()
-print("The most obscure heroes are - ")
-for hero in results:
-    print(hero)
+
+print("Following are obscure -")
+for i in results:
+    print(i[0],i[1])
 
 spark.stop()
